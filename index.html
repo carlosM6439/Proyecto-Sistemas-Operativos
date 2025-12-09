@@ -1,5 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyecto Final - Servidor Apache en Ubuntu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #e67e22;
+            --accent-color: #3498db;
+            --ubuntu-orange: #e95420;
+            --apache-red: #d12127;
+            --light-color: #f8f9fa;
+            --dark-color: #1a252f;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --text-color: #333;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
 
-<div class="step">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Ubuntu, 'DejaVu Sans', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--dark-color), var(--primary-color));
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+            border-bottom: 5px solid var(--ubuntu-orange);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--apache-red) 0%, transparent 70%);
+            opacity: 0.1;
+            animation: pulse 15s infinite linear;
+        }
+
+        @keyframes pulse {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        header .logo-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 1.5rem;
+        }
+
+        .logo {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px 25px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+        }
+
+        .logo:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+
+        /* Main Content */
+        main {
+            padding: 2rem 0;
+        }
+
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border-left: 5px solid var(--ubuntu-orange);
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .section h2 {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--ubuntu-orange);
+            padding-bottom: 0.8rem;
+            margin-bottom: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section h2 i {
+            color: var(--ubuntu-orange);
+        }
+
+        /* Command Cards */
+        .command-card {
+            background: var(--light-color);
+            border-left: 4px solid var(--apache-red);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .command-card::before {
+            content: "Terminal";
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--apache-red);
+            color: white;
+            padding: 5px 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border-radius: 0 8px 0 8px;
+        }
+
+        .command {
+            font-family: 'Ubuntu Mono', 'Courier New', monospace;
+            background: var(--dark-color);
+            color: #50fa7b;
+            padding: 1.2rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 1rem;
+            margin: 0.5rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .copy-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: var(--transition);
+        }
+
+        .copy-btn:hover {
+            background: #2980b9;
+        }
+
+        /* Steps */
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .step {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 1.5rem;
+            border-radius: 8px;
+            position: relative;
+            border: 2px solid transparent;
+            transition: var(--transition);
+        }
+
+        .step:hover {
+            border-color: var(--ubuntu-orange);
+            transform: translateY(-3px);
+        }
+
+        .step-number {
+            position: absolute;
+            top: -15px;
+            left: -15px;
+            background: var(--ubuntu-orange);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* Images Grid */
+        .images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .image-card {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .image-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .image-card .caption {
+            background: var(--light-color);
+            padding: 1rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        /* Status Indicators */
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin: 0 10px;
+        }
+
+        .status-running {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-stopped {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Configuration Example */
+        .config-example {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+            font-family: 'Ubuntu Mono', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .config-comment {
+            color: #a0aec0;
+            font-style: italic;
+        }
+
+        .config-directive {
+            color: #63b3ed;
+        }
+
+        .config-value {
+            color: #68d391;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark-color);
+            color: white;
+            text-align: center;
+            padding: 2.5rem 0;
+            margin-top: 3rem;
+            border-top: 5px solid var(--ubuntu-orange);
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            color: var(--ubuntu-orange);
+            transform: translateY(-3px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .logo-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .section {
+                padding: 1.5rem;
+            }
+            
+            .command {
+                font-size: 0.9rem;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <h1>
+                <i class="fab fa-ubuntu"></i>
+                Proyecto Final - Servidor Apache en Ubuntu
+                <i class="fas fa-server"></i>
+            </h1>
+            <p>Configuración completa de un servidor web Apache en Ubuntu Server</p>
+            
+            <div class="logo-container">
+                <div class="logo">
+                    <i class="fab fa-ubuntu fa-2x"></i>
+                    <span>Ubuntu 22.04 LTS</span>
+                </div>
+                <div class="logo">
+                    <i class="fas fa-server fa-2x"></i>
+                    <span>Apache 2.4</span>
+                </div>
+                <div class="logo">
+                    <i class="fas fa-shield-alt fa-2x"></i>
+                    <span>Firewall UFW</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Introducción -->
+        <section class="section">
+            <h2><i class="fas fa-info-circle"></i> Introducción al Proyecto</h2>
+            <p>Este proyecto demuestra la instalación y configuración completa de un servidor web Apache en Ubuntu Server. Aprenderás desde la instalación básica hasta la configuración avanzada de hosts virtuales y seguridad.</p>
+            
+            <div class="images-grid">
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1629654291660-3c98113a0438?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Servidor Ubuntu">
+                    <div class="caption">Servidor Ubuntu en Data Center</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1614064641938-3bbee52942c7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Apache Logo">
+                    <div class="caption">Servidor Web Apache</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Configuración Terminal">
+                    <div class="caption">Configuración desde Terminal</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Instalación -->
+        <section class="section">
+            <h2><i class="fas fa-download"></i> Instalación de Apache en Ubuntu</h2>
+            
+            <div class="steps-container">
+                <div class="step">
                     <div class="step-number">1</div>
                     <h3>Actualizar Sistema</h3>
                     <p>Primero actualiza la lista de paquetes y el sistema:</p>
@@ -315,10 +740,10 @@
             <h3>Proyecto Final - Sistemas Operativos</h3>
             <p>Configuración de Servidor Apache en Ubuntu 22.04 LTS</p>
             <p>© 2025 - Universidad Politecnica Metropolitana de Puebla</p>
-            <p>Desarrollado por Carlos Manuel Mendoza Bravo</p>
+            <p>Carlos Manuel Mendoza Bravo</p>
             <p>Joshep Hernandez Sanchez</p>
             <div class="social-links">
-                <a href="" title="GitHub"><i class="fab fa-github"></i></a>
+                <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
                 <a href="#" title="Documentación"><i class="fas fa-book"></i></a>
                 <a href="#" title="Contacto"><i class="fas fa-envelope"></i></a>
             </div>
