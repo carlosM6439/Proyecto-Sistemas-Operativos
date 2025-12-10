@@ -1,837 +1,138 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proyecto Final - Servidor Apache en Ubuntu</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #e67e22;
-            --accent-color: #3498db;
-            --ubuntu-orange: #e95420;
-            --apache-red: #d12127;
-            --light-color: #f8f9fa;
-            --dark-color: #1a252f;
-            --success-color: #27ae60;
-            --warning-color: #f39c12;
-            --text-color: #333;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
-        }
+<!-- Agregar esta sección después de la Introducción (antes de la sección de Instalación) -->
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Ubuntu, 'DejaVu Sans', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            background-attachment: fixed;
-        }
-
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Header */
-        header {
-            background: linear-gradient(135deg, var(--dark-color), var(--primary-color));
-            color: white;
-            padding: 3rem 0;
-            text-align: center;
-            border-bottom: 5px solid var(--ubuntu-orange);
-            position: relative;
-            overflow: hidden;
-        }
-
-        header::before {
-            content: "";
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, var(--apache-red) 0%, transparent 70%);
-            opacity: 0.1;
-            animation: pulse 15s infinite linear;
-        }
-
-        @keyframes pulse {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .header-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        header h1 {
-            font-size: 2.8rem;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        header .logo-container {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 1.5rem;
-        }
-
-        .logo {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px 25px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: var(--transition);
-        }
-
-        .logo:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-3px);
-        }
-
-        /* Main Content */
-        main {
-            padding: 2rem 0;
-        }
-
-        .section {
-            background: white;
-            border-radius: 10px;
-            padding: 2.5rem;
-            margin-bottom: 2.5rem;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            border-left: 5px solid var(--ubuntu-orange);
-        }
-
-        .section:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .section h2 {
-            color: var(--primary-color);
-            border-bottom: 3px solid var(--ubuntu-orange);
-            padding-bottom: 0.8rem;
-            margin-bottom: 1.8rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .section h2 i {
-            color: var(--ubuntu-orange);
-        }
-
-        /* Command Cards */
-        .command-card {
-            background: var(--light-color);
-            border-left: 4px solid var(--apache-red);
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-            border-radius: 8px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .command-card::before {
-            content: "Terminal";
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: var(--apache-red);
-            color: white;
-            padding: 5px 15px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            border-radius: 0 8px 0 8px;
-        }
-
-        .command {
-            font-family: 'Ubuntu Mono', 'Courier New', monospace;
-            background: var(--dark-color);
-            color: #50fa7b;
-            padding: 1.2rem;
-            border-radius: 6px;
-            overflow-x: auto;
-            font-size: 1rem;
-            margin: 0.5rem 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .copy-btn {
-            background: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 5px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: var(--transition);
-        }
-
-        .copy-btn:hover {
-            background: #2980b9;
-        }
-
-        /* Steps */
-        .steps-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .step {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 1.5rem;
-            border-radius: 8px;
-            position: relative;
-            border: 2px solid transparent;
-            transition: var(--transition);
-        }
-
-        .step:hover {
-            border-color: var(--ubuntu-orange);
-            transform: translateY(-3px);
-        }
-
-        .step-number {
-            position: absolute;
-            top: -15px;
-            left: -15px;
-            background: var(--ubuntu-orange);
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-
-        /* Images Grid */
-        .images-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .image-card {
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
-
-        .image-card:hover {
-            transform: scale(1.03);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .image-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            display: block;
-        }
-
-        .image-card .caption {
-            background: var(--light-color);
-            padding: 1rem;
-            text-align: center;
-            font-weight: 500;
-        }
-
-        /* Status Indicators */
-        .status {
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            margin: 0 10px;
-        }
-
-        .status-running {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .status-stopped {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        /* Configuration Example */
-        .config-example {
-            background: #2d3748;
-            color: #e2e8f0;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin: 1.5rem 0;
-            overflow-x: auto;
-            font-family: 'Ubuntu Mono', monospace;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
-        .config-comment {
-            color: #a0aec0;
-            font-style: italic;
-        }
-
-        .config-directive {
-            color: #63b3ed;
-        }
-
-        .config-value {
-            color: #68d391;
-        }
-
-        /* Footer */
-        footer {
-            background: var(--dark-color);
-            color: white;
-            text-align: center;
-            padding: 2.5rem 0;
-            margin-top: 3rem;
-            border-top: 5px solid var(--ubuntu-orange);
-        }
-
-        .footer-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 1.5rem;
-        }
-
-        .social-links a {
-            color: white;
-            font-size: 1.5rem;
-            transition: var(--transition);
-        }
-
-        .social-links a:hover {
-            color: var(--ubuntu-orange);
-            transform: translateY(-3px);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 2rem;
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .logo-container {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .section {
-                padding: 1.5rem;
-            }
-            
-            .command {
-                font-size: 0.9rem;
-                padding: 1rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <div class="container header-content">
-            <h1>
-                <i class="fab fa-ubuntu"></i>
-                Proyecto Final - Servidor Apache en Ubuntu
-                <i class="fas fa-server"></i>
-            </h1>
-            <p>Configuración completa de un servidor web Apache en Ubuntu Server</p>
-            
-            <div class="logo-container">
-                <div class="logo">
-                    <i class="fab fa-ubuntu fa-2x"></i>
-                    <span>Ubuntu 22.04 LTS</span>
-                </div>
-                <div class="logo">
-                    <i class="fas fa-server fa-2x"></i>
-                    <span>Apache 2.4</span>
-                </div>
-                <div class="logo">
-                    <i class="fas fa-shield-alt fa-2x"></i>
-                    <span>Firewall UFW</span>
-                </div>
+<section class="section">
+    <h2><i class="fas fa-question-circle"></i> ¿Por Qué Apache en Ubuntu?</h2>
+    
+    <div class="steps-container">
+        <div class="step">
+            <div class="step-number">✓</div>
+            <h3>Ventajas de Apache</h3>
+            <ul style="padding-left: 20px; margin-top: 10px;">
+                <li><strong>Estabilidad probada:</strong> Más de 25 años en producción</li>
+                <li><strong>Multiplataforma:</strong> Funciona en múltiples sistemas operativos</li>
+                <li><strong>Módulos extensibles:</strong> Arquitectura modular flexible</li>
+                <li><strong>Comunidad activa:</strong> Gran soporte y documentación</li>
+                <li><strong>Seguridad robusta:</strong> Actualizaciones constantes de seguridad</li>
+                <li><strong>.htaccess:</strong> Configuración por directorio sin reiniciar</li>
+            </ul>
+        </div>
+        
+        <div class="step">
+            <div class="step-number">✓</div>
+            <h3>Ventajas de Ubuntu Server</h3>
+            <ul style="padding-left: 20px; margin-top: 10px;">
+                <li><strong>LTS (Long Term Support):</strong> 5 años de soporte garantizado</li>
+                <li><strong>Gratuito y Open Source:</strong> Sin costos de licencia</li>
+                <li><strong>Seguridad:</strong> Actualizaciones automáticas de seguridad</li>
+                <li><strong>Comunidad enorme:</strong> Mayor base de usuarios y recursos</li>
+                <li><strong>APT:</strong> Gestor de paquetes poderoso y fácil de usar</li>
+                <li><strong>Cloud Ready:</strong> Optimizado para implementaciones cloud</li>
+            </ul>
+        </div>
+        
+        <div class="step">
+            <div class="step-number">✓</div>
+            <h3>Ventajas de la Combinación</h3>
+            <ul style="padding-left: 20px; margin-top: 10px;">
+                <li><strong>Compatibilidad perfecta:</strong> Apache incluido en repositorios oficiales</li>
+                <li><strong>Configuración sencilla:</strong> Estructura de archivos bien organizada</li>
+                <li><strong>Alto rendimiento:</strong> Optimizado para hardware moderno</li>
+                <li><strong>Fácil mantenimiento:</strong> Actualizaciones centralizadas</li>
+                <li><strong>Escalabilidad:</strong> Ideal desde pequeños proyectos a grandes empresas</li>
+                <li><strong>Ecosistema completo:</strong> Compatible con PHP, Python, Perl, MySQL, etc.</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="command-card" style="margin-top: 2rem;">
+        <h4><i class="fas fa-chart-line"></i> Estadísticas Clave</h4>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+            <div style="text-align: center; padding: 1rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 8px;">
+                <h3 style="font-size: 2rem; margin: 0;">31.4%</h3>
+                <p>Cuota de mercado web servers</p>
+            </div>
+            <div style="text-align: center; padding: 1rem; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border-radius: 8px;">
+                <h3 style="font-size: 2rem; margin: 0;">25+ años</h3>
+                <p>En desarrollo continuo</p>
+            </div>
+            <div style="text-align: center; padding: 1rem; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border-radius: 8px;">
+                <h3 style="font-size: 2rem; margin: 0;">1000+</h3>
+                <p>Módulos disponibles</p>
+            </div>
+            <div style="text-align: center; padding: 1rem; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; border-radius: 8px;">
+                <h3 style="font-size: 2rem; margin: 0;">47%</h3>
+                <p>Servidores Linux usan Ubuntu</p>
             </div>
         </div>
-    </header>
-
-    <main class="container">
-        <!-- Introducción -->
-        <section class="section">
-            <h2><i class="fas fa-info-circle"></i> Introducción al Proyecto</h2>
-            <p>Este proyecto demuestra la instalación y configuración completa de un servidor web Apache en Ubuntu Server. Aprenderás desde la instalación básica hasta la configuración avanzada de hosts virtuales y seguridad.</p>
-            
-            <div class="images-grid">
-                <div class="image-card">
-                    <img src="https://images.unsplash.com/photo-1629654291660-3c98113a0438?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Servidor Ubuntu">
-                    <div class="caption">Servidor Ubuntu en Data Center</div>
-                </div>
-                <div class="image-card">
-                    <img src="https://images.unsplash.com/photo-1614064641938-3bbee52942c7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Apache Logo">
-                    <div class="caption">Servidor Web Apache</div>
-                </div>
-                <div class="image-card">
-                    <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Configuración Terminal">
-                    <div class="caption">Configuración desde Terminal</div>
-                </div>
+    </div>
+    
+    <div style="margin-top: 2rem; padding: 1.5rem; background: #f0f7ff; border-radius: 8px; border-left: 4px solid var(--accent-color);">
+        <h4><i class="fas fa-lightbulb"></i> Casos de Uso Ideales</h4>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 1rem;">
+            <div style="background: white; padding: 1rem; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h5 style="color: var(--ubuntu-orange); margin-bottom: 0.5rem;"><i class="fas fa-shopping-cart"></i> E-commerce</h5>
+                <p>Sitios con WordPress, Magento, PrestaShop</p>
             </div>
-        </section>
-
-        <!-- Instalación -->
-        <section class="section">
-            <h2><i class="fas fa-download"></i> Instalación de Apache en Ubuntu</h2>
-            
-            <div class="steps-container">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <h3>Actualizar Sistema</h3>
-                    <p>Primero actualiza la lista de paquetes y el sistema:</p>
-                    <div class="command">
-                        <code>sudo apt update && sudo apt upgrade -y</code>
-                        <button class="copy-btn" onclick="copyCode('update')">Copiar</button>
-                    </div>
-                </div>
-                
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <h3>Instalar Apache</h3>
-                    <p>Instala el servidor web Apache2:</p>
-                    <div class="command">
-                        <code>sudo apt install apache2 -y</code>
-                        <button class="copy-btn" onclick="copyCode('install')">Copiar</button>
-                    </div>
-                </div>
-                
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <h3>Verificar Instalación</h3>
-                    <p>Comprueba que Apache se instaló correctamente:</p>
-                    <div class="command">
-                        <code>sudo systemctl status apache2</code>
-                        <button class="copy-btn" onclick="copyCode('status')">Copiar</button>
-                    </div>
-                </div>
+            <div style="background: white; padding: 1rem; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h5 style="color: var(--ubuntu-orange); margin-bottom: 0.5rem;"><i class="fas fa-university"></i> Instituciones</h5>
+                <p>Escuelas, universidades, gobierno</p>
             </div>
-            
-            <div class="command-card">
-                <h4><i class="fas fa-terminal"></i> Comandos de Control del Servicio</h4>
-                <div class="command">
-                    <code>sudo systemctl start apache2</code>
-                    <button class="copy-btn" onclick="copyCode('start')">Copiar</button>
-                </div>
-                <div class="command">
-                    <code>sudo systemctl stop apache2</code>
-                    <button class="copy-btn" onclick="copyCode('stop')">Copiar</button>
-                </div>
-                <div class="command">
-                    <code>sudo systemctl restart apache2</code>
-                    <button class="copy-btn" onclick="copyCode('restart')">Copiar</button>
-                </div>
-                <div class="command">
-                    <code>sudo systemctl enable apache2</code>
-                    <button class="copy-btn" onclick="copyCode('enable')">Copiar</button>
-                </div>
+            <div style="background: white; padding: 1rem; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h5 style="color: var(--ubuntu-orange); margin-bottom: 0.5rem;"><i class="fas fa-newspaper"></i> Medios Digitales</h5>
+                <p>Periódicos, revistas, blogs</p>
             </div>
-        </section>
-
-        <!-- Configuración Firewall -->
-        <section class="section">
-            <h2><i class="fas fa-shield-alt"></i> Configuración del Firewall (UFW)</h2>
-            
-            <p>Ubuntu incluye UFW (Uncomplicated Firewall). Configura las reglas para permitir tráfico web:</p>
-            
-            <div class="command-card">
-                <h4><i class="fas fa-network-wired"></i> Comandos de Configuración UFW</h4>
-                <div class="command">
-                    <code>sudo ufw enable</code>
-                    <button class="copy-btn" onclick="copyCode('ufw-enable')">Copiar</button>
-                </div>
-                <div class="command">
-                    <code>sudo ufw allow 'Apache Full'</code>
-                    <button class="copy-btn" onclick="copyCode('ufw-allow')">Copiar</button>
-                </div>
-                <div class="command">
-                    <code>sudo ufw allow ssh</code>
-                    <button class="copy-btn" onclick="copyCode('ufw-ssh')">Copiar</button>
-                </div>
-                <div class="command">
-                    <code>sudo ufw status verbose</code>
-                    <button class="copy-btn" onclick="copyCode('ufw-status')">Copiar</button>
-                </div>
-            </div>
-            
-            <div class="images-grid">
-                <div class="image-card">
-                    <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Firewall UFW">
-                    <div class="caption">Configuración del Firewall UFW</div>
-                </div>
-                <div class="image-card">
-                    <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Puertos Abiertos">
-                    <div class="caption">Puertos HTTP/HTTPS Abiertos</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Estructura de Directorios -->
-        <section class="section">
-            <h2><i class="fas fa-folder-tree"></i> Estructura de Directorios de Apache</h2>
-            
-            <div class="command-card">
-                <h4><i class="fas fa-sitemap"></i> Directorios Principales</h4>
-                <div class="command">
-                    <code>/var/www/html</code>
-                    <span>Document root (archivos del sitio)</span>
-                </div>
-                <div class="command">
-                    <code>/etc/apache2</code>
-                    <span>Archivos de configuración</span>
-                </div>
-                <div class="command">
-                    <code>/etc/apache2/sites-available</code>
-                    <span>Configuraciones de sitios disponibles</span>
-                </div>
-                <div class="command">
-                    <code>/etc/apache2/sites-enabled</code>
-                    <span>Sitios activados (enlaces simbólicos)</span>
-                </div>
-                <div class="command">
-                    <code>/var/log/apache2</code>
-                    <span>Archivos de log</span>
-                </div>
-            </div>
-            
-            <h3>Crear tu Primer Sitio Web</h3>
-            <div class="command">
-                <code>sudo mkdir -p /var/www/misitio</code>
-                <button class="copy-btn" onclick="copyCode('mkdir')">Copiar</button>
-            </div>
-            <div class="command">
-                <code>sudo chown -R $USER:$USER /var/www/misitio</code>
-                <button class="copy-btn" onclick="copyCode('chown')">Copiar</button>
-            </div>
-            <div class="command">
-                <code>sudo chmod -R 755 /var/www/misitio</code>
-                <button class="copy-btn" onclick="copyCode('chmod')">Copiar</button>
-            </div>
-        </section>
-
-        <!-- Configuración Virtual Host -->
-        <section class="section">
-            <h2><i class="fas fa-cogs"></i> Configuración de Virtual Host</h2>
-            
-            <p>Crea un archivo de configuración para tu sitio:</p>
-            
-            <div class="command">
-                <code>sudo nano /etc/apache2/sites-available/misitio.conf</code>
-                <button class="copy-btn" onclick="copyCode('nano')">Copiar</button>
-            </div>
-            
-            <div class="config-example">
-                <span class="config-comment"># Configuración básica de Virtual Host</span><br>
-                <span class="config-directive">&lt;VirtualHost</span> *:80&gt;<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="config-directive">ServerAdmin</span> <span class="config-value">admin@misitio.com</span><br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="config-directive">ServerName</span> <span class="config-value">misitio.com</span><br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="config-directive">ServerAlias</span> <span class="config-value">www.misitio.com</span><br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="config-directive">DocumentRoot</span> <span class="config-value">/var/www/misitio</span><br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="config-directive">ErrorLog</span> ${APACHE_LOG_DIR}/error.log<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="config-directive">CustomLog</span> ${APACHE_LOG_DIR}/access.log combined<br>
-                <br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="config-directive">&lt;Directory</span> <span class="config-value">/var/www/misitio</span>&gt;<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="config-directive">Options</span> <span class="config-value">Indexes FollowSymLinks</span><br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="config-directive">AllowOverride</span> <span class="config-value">All</span><br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="config-directive">Require</span> <span class="config-value">all granted</span><br>
-                &nbsp;&nbsp;&nbsp;&nbsp;<span class="config-directive">&lt;/Directory&gt;</span><br>
-                <span class="config-directive">&lt;/VirtualHost&gt;</span>
-            </div>
-            
-            <div class="command-card">
-                <h4><i class="fas fa-exchange-alt"></i> Activar y Desactivar Sitios</h4>
-                <div class="command">
-                    <code>sudo a2ensite misitio.conf</code>
-                    <button class="copy-btn" onclick="copyCode('a2ensite')">Copiar</button>
-                </div>
-                <div class="command">
-                    <code>sudo a2dissite 000-default.conf</code>
-                    <button class="copy-btn" onclick="copyCode('a2dissite')">Copiar</button>
-                </div>
-                <div class="command">
-                    <code>sudo systemctl reload apache2</code>
-                    <button class="copy-btn" onclick="copyCode('reload')">Copiar</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Crear Página de Prueba -->
-        <section class="section">
-            <h2><i class="fas fa-code"></i> Crear Página Web de Prueba</h2>
-            
-            <p>Crea un archivo HTML básico para probar tu servidor:</p>
-            
-            <div class="command">
-                <code>nano /var/www/misitio/index.html</code>
-                <button class="copy-btn" onclick="copyCode('create-html')">Copiar</button>
-            </div>
-            
-            <div class="config-example">
-                <span class="config-comment">&lt;!-- Página de prueba del servidor Apache --&gt;</span><br>
-                &lt;!DOCTYPE html&gt;<br>
-                &lt;html lang="es"&gt;<br>
-                &lt;head&gt;<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&lt;meta charset="UTF-8"&gt;<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&lt;title&gt;Servidor Apache - Ubuntu&lt;/title&gt;<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&lt;style&gt;<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;body { font-family: Arial, sans-serif; margin: 40px; }<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.success { color: green; font-size: 24px; }<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&lt;/style&gt;<br>
-                &lt;/head&gt;<br>
-                &lt;body&gt;<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&lt;h1 class="success"&gt;✅ ¡Servidor Apache Funcionando!&lt;/h1&gt;<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&lt;p&gt;Ubuntu Server + Apache 2.4&lt;/p&gt;<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&lt;p&gt;Dirección IP: <span class="config-value"><?php echo $_SERVER['SERVER_ADDR']; ?></span>&lt;/p&gt;<br>
-                &nbsp;&nbsp;&nbsp;&nbsp;&lt;p&gt;Hora del servidor: <span class="config-value"><?php echo date('Y-m-d H:i:s'); ?></span>&lt;/p&gt;<br>
-                &lt;/body&gt;<br>
-                &lt;/html&gt;
-            </div>
-            
-            <div class="images-grid">
-                <div class="image-card">
-                    <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Editor de Código">
-                    <div class="caption">Edición de Archivos de Configuración</div>
-                </div>
-                <div class="image-card">
-                    <img src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Página Web">
-                    <div class="caption">Página Web Funcionando</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Verificar Funcionamiento -->
-        <section class="section">
-            <h2><i class="fas fa-check-circle"></i> Verificar el Funcionamiento</h2>
-            
-            <div class="steps-container">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <h3>Ver Apache</h3>
-                    <p>Abre tu navegador y visita:</p>
-                    <div class="command">
-                        <code>http://tu-ip-servidor</code>
-                    </div>
-                    <p>O localmente:</p>
-                    <div class="command">
-                        <code>http://localhost</code>
-                    </div>
-                </div>
-                
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <h3>Ver Logs</h3>
-                    <p>Monitorea los logs en tiempo real:</p>
-                    <div class="command">
-                        <code>sudo tail -f /var/log/apache2/access.log</code>
-                        <button class="copy-btn" onclick="copyCode('tail-access')">Copiar</button>
-                    </div>
-                    <div class="command">
-                        <code>sudo tail -f /var/log/apache2/error.log</code>
-                        <button class="copy-btn" onclick="copyCode('tail-error')">Copiar</button>
-                    </div>
-                </div>
-                
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <h3>Test de Rendimiento</h3>
-                    <p>Instala y usa Apache Benchmark:</p>
-                    <div class="command">
-                        <code>sudo apt install apache2-utils -y</code>
-                        <button class="copy-btn" onclick="copyCode('install-ab')">Copiar</button>
-                    </div>
-                    <div class="command">
-                        <code>ab -n 1000 -c 100 http://localhost/</code>
-                        <button class="copy-btn" onclick="copyCode('ab-test')">Copiar</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Comandos Útiles -->
-        <section class="section">
-            <h2><i class="fas fa-terminal"></i> Comandos Útiles de Diagnóstico</h2>
-            
-            <div class="command-card">
-                <div class="command">
-                    <code>apache2 -v</code>
-                    <span>Versión de Apache</span>
-                </div>
-                <div class="command">
-                    <code>sudo apache2ctl configtest</code>
-                    <span>Verificar sintaxis configuración</span>
-                </div>
-                <div class="command">
-                    <code>sudo ss -tulpn | grep :80</code>
-                    <span>Verificar puerto 80 escuchando</span>
-                </div>
-                <div class="command">
-                    <code>curl -I http://localhost</code>
-                    <span>Ver headers HTTP</span>
-                </div>
-                <div class="command">
-                    <code>sudo journalctl -u apache2 --since "1 hour ago"</code>
-                    <span>Logs del sistema para Apache</span>
-                </div>
-            </div>
-            
-            <div class="images-grid">
-                <div class="image-card">
-                    <img src="https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Monitoreo Servidor">
-                    <div class="caption">Monitoreo del Servidor</div>
-                </div>
-                <div class="image-card">
-                    <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Dashboard Apache">
-                    <div class="caption">Dashboard de Apache</div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="container footer-content">
-            <h3>Proyecto Final - Sistemas Operativos</h3>
-            <p>Configuración de Servidor Apache en Ubuntu 22.04 LTS</p>
-            <p>© 2025 - Universidad Politecnica de Puebla</p>
-            <p>Desarrollado por Carlos Manuel Mendoza Bravo</p>
-            <P>Joseph Hernandez Sanchez</P>
-            <div class="social-links">
-                <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
-                <a href="#" title="Documentación"><i class="fas fa-book"></i></a>
-                <a href="#" title="Contacto"><i class="fas fa-envelope"></i></a>
+            <div style="background: white; padding: 1rem; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h5 style="color: var(--ubuntu-orange); margin-bottom: 0.5rem;"><i class="fas fa-briefcase"></i> Corporaciones</h5>
+                <p>Intranets, aplicaciones empresariales</p>
             </div>
         </div>
-    </footer>
-
-    <script>
-        // Función para copiar comandos
-        function copyCode(codeId) {
-            const commands = {
-                'update': 'sudo apt update && sudo apt upgrade -y',
-                'install': 'sudo apt install apache2 -y',
-                'status': 'sudo systemctl status apache2',
-                'start': 'sudo systemctl start apache2',
-                'stop': 'sudo systemctl stop apache2',
-                'restart': 'sudo systemctl restart apache2',
-                'enable': 'sudo systemctl enable apache2',
-                'ufw-enable': 'sudo ufw enable',
-                'ufw-allow': 'sudo ufw allow \'Apache Full\'',
-                'ufw-ssh': 'sudo ufw allow ssh',
-                'ufw-status': 'sudo ufw status verbose',
-                'mkdir': 'sudo mkdir -p /var/www/misitio',
-                'chown': 'sudo chown -R $USER:$USER /var/www/misitio',
-                'chmod': 'sudo chmod -R 755 /var/www/misitio',
-                'nano': 'sudo nano /etc/apache2/sites-available/misitio.conf',
-                'a2ensite': 'sudo a2ensite misitio.conf',
-                'a2dissite': 'sudo a2dissite 000-default.conf',
-                'reload': 'sudo systemctl reload apache2',
-                'create-html': 'nano /var/www/misitio/index.html',
-                'tail-access': 'sudo tail -f /var/log/apache2/access.log',
-                'tail-error': 'sudo tail -f /var/log/apache2/error.log',
-                'install-ab': 'sudo apt install apache2-utils -y',
-                'ab-test': 'ab -n 1000 -c 100 http://localhost/'
-            };
-
-            const command = commands[codeId];
-            if (command) {
-                navigator.clipboard.writeText(command).then(() => {
-                    const buttons = document.querySelectorAll('.copy-btn');
-                    buttons.forEach(btn => {
-                        if (btn.getAttribute('onclick') === `copyCode('${codeId}')`) {
-                            const originalText = btn.textContent;
-                            btn.textContent = "✓ Copiado";
-                            btn.style.background = "var(--success-color)";
-                            
-                            setTimeout(() => {
-                                btn.textContent = originalText;
-                                btn.style.background = "";
-                            }, 2000);
-                        }
-                    });
-                });
-            }
-        }
-
-        // Animación para las secciones
-        document.addEventListener('DOMContentLoaded', function() {
-            const sections = document.querySelectorAll('.section');
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = 1;
-                        entry.target.style.transform = 'translateY(0)';
-                    }
-                });
-            }, { threshold: 0.1 });
-            
-            sections.forEach(section => {
-                section.style.opacity = 0;
-                section.style.transform = 'translateY(20px)';
-                section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-                observer.observe(section);
-            });
-            
-            // Simular estado del servidor
-            updateServerStatus();
-            setInterval(updateServerStatus, 5000);
-        });
-
-        function updateServerStatus() {
-            const statusElement = document.getElementById('server-status');
-            if (statusElement) {
-                const isRunning = Math.random() > 0.1; // 90% probabilidad de "running"
-                statusElement.textContent = isRunning ? 'RUNNING' : 'STOPPED';
-                statusElement.className = isRunning ? 'status status-running' : 'status status-stopped';
-            }
-        }
-    </script>
-</body>
-</html>
+    </div>
+    
+    <div style="margin-top: 2rem; padding: 1.5rem; background: #fff8e1; border-radius: 8px; border: 1px solid #ffd54f;">
+        <h4><i class="fas fa-balance-scale"></i> Comparación con Alternativas</h4>
+        <div style="overflow-x: auto; margin-top: 1rem;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: var(--primary-color); color: white;">
+                        <th style="padding: 12px; text-align: left;">Característica</th>
+                        <th style="padding: 12px; text-align: left;">Apache</th>
+                        <th style="padding: 12px; text-align: left;">Nginx</th>
+                        <th style="padding: 12px; text-align: left;">LiteSpeed</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 12px; font-weight: bold;">Modelo de conexión</td>
+                        <td style="padding: 12px;">Proceso por conexión</td>
+                        <td style="padding: 12px;">Event-driven</td>
+                        <td style="padding: 12px;">Event-driven</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 12px; font-weight: bold;">.htaccess</td>
+                        <td style="padding: 12px; color: var(--success-color);">✓ Soportado</td>
+                        <td style="padding: 12px; color: var(--apache-red);">✗ No nativo</td>
+                        <td style="padding: 12px; color: var(--success-color);">✓ Soportado</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 12px; font-weight: bold;">Facilidad configuración</td>
+                        <td style="padding: 12px; color: var(--success-color);">✓ Muy fácil</td>
+                        <td style="padding: 12px;">Moderada</td>
+                        <td style="padding: 12px;">Moderada</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 12px; font-weight: bold;">Costo</td>
+                        <td style="padding: 12px; color: var(--success-color);">✓ Gratuito</td>
+                        <td style="padding: 12px; color: var(--success-color);">✓ Gratuito</td>
+                        <td style="padding: 12px;">Versión paga</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; font-weight: bold;">Compatibilidad</td>
+                        <td style="padding: 12px; color: var(--success-color);">✓ Excelente</td>
+                        <td style="padding: 12px; color: var(--success-color);">✓ Buena</td>
+                        <td style="padding: 12px;">Moderada</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
