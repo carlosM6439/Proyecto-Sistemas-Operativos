@@ -1,139 +1,1027 @@
-<!-- Agregar esta sección después de la Introducción (antes de la sección de Instalación) -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyecto Final - Apache en Ubuntu: Ventajas y Configuración</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="description" content="Guía completa sobre las ventajas de usar Apache en Ubuntu Server, incluyendo instalación, configuración y optimización del servidor web más popular.">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #e67e22;
+            --accent-color: #3498db;
+            --ubuntu-orange: #e95420;
+            --apache-red: #d12127;
+            --light-color: #f8f9fa;
+            --dark-color: #1a252f;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --text-color: #333;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-tertiary: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
 
-<section class="section">
-    <h2><i class="fas fa-question-circle"></i> ¿Por Qué Apache en Ubuntu?</h2>
-    <!-- Reemplazar el párrafo actual de la introducción con: -->
-<p>Este proyecto demuestra la instalación y configuración completa de un servidor web Apache en Ubuntu Server. Apache es el servidor web más utilizado a nivel mundial, y combinado con Ubuntu Server, ofrece una solución robusta, segura y de alto rendimiento para hosting web. En esta guía aprenderás desde la instalación básica hasta la configuración avanzada de hosts virtuales y seguridad, comprendiendo por qué esta combinación es la elección preferida de millones de administradores de sistemas.</p>
-    <div class="steps-container">
-        <div class="step">
-            <div class="step-number">✓</div>
-            <h3>Ventajas de Apache</h3>
-            <ul style="padding-left: 20px; margin-top: 10px;">
-                <li><strong>Estabilidad probada:</strong> Más de 25 años en producción</li>
-                <li><strong>Multiplataforma:</strong> Funciona en múltiples sistemas operativos</li>
-                <li><strong>Módulos extensibles:</strong> Arquitectura modular flexible</li>
-                <li><strong>Comunidad activa:</strong> Gran soporte y documentación</li>
-                <li><strong>Seguridad robusta:</strong> Actualizaciones constantes de seguridad</li>
-                <li><strong>.htaccess:</strong> Configuración por directorio sin reiniciar</li>
-            </ul>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Ubuntu, 'DejaVu Sans', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Mejorado */
+        header {
+            background: linear-gradient(135deg, var(--dark-color) 0%, #2c5282 100%);
+            color: white;
+            padding: 4rem 0 3rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(233, 84, 32, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(209, 33, 39, 0.15) 0%, transparent 50%);
+            animation: pulse 20s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.7; }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        header h1 {
+            font-size: 3.2rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        header h1 i {
+            color: var(--ubuntu-orange);
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        header .subtitle {
+            font-size: 1.4rem;
+            margin-bottom: 2.5rem;
+            color: #e2e8f0;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+            padding: 20px 30px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-width: 220px;
+        }
+
+        .logo:hover {
+            transform: translateY(-5px) scale(1.05);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.15));
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .logo span {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        /* Main Content Mejorado */
+        main {
+            padding: 3rem 0;
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border-left: 6px solid var(--ubuntu-orange);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, transparent 50%, rgba(233, 84, 32, 0.05) 50%);
+            border-radius: 0 15px 0 0;
+        }
+
+        .section:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .section h2 {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--ubuntu-orange);
+            padding-bottom: 1rem;
+            margin-bottom: 2.5rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 2.2rem;
+        }
+
+        .section h2 i {
+            color: var(--ubuntu-orange);
+            background: rgba(233, 84, 32, 0.1);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Estilos mejorados para la nueva sección */
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .step {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            padding: 2rem;
+            border-radius: 12px;
+            position: relative;
+            border: 2px solid #e2e8f0;
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .step:hover {
+            border-color: var(--ubuntu-orange);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .step-number {
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            background: linear-gradient(135deg, var(--ubuntu-orange), #ff6b35);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.4rem;
+            box-shadow: 0 4px 10px rgba(233, 84, 32, 0.3);
+        }
+
+        .step h3 {
+            color: var(--primary-color);
+            margin-bottom: 1.2rem;
+            font-size: 1.5rem;
+            padding-left: 10px;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .step ul {
+            list-style-type: none;
+        }
+
+        .step li {
+            padding: 8px 0;
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .step li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success-color);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        /* Estadísticas mejoradas */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 2rem 1rem;
+            border-radius: 12px;
+            color: white;
+            border-radius: 15px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-card:nth-child(1) { background: var(--gradient-primary); }
+        .stat-card:nth-child(2) { background: var(--gradient-secondary); }
+        .stat-card:nth-child(3) { background: var(--gradient-tertiary); }
+        .stat-card:nth-child(4) { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+
+        .stat-card h3 {
+            font-size: 2.8rem;
+            margin: 0 0 10px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Casos de uso mejorados */
+        .use-cases {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f0f7ff 0%, #e6f7ff 100%);
+            border-radius: 15px;
+            border-left: 6px solid var(--accent-color);
+        }
+
+        .use-cases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .use-case-card {
+            background: white;
+            padding: 1.8rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: var(--transition);
+            border-top: 4px solid transparent;
+            text-align: center;
+        }
+
+        .use-case-card:hover {
+            transform: translateY(-8px);
+            border-top-color: var(--ubuntu-orange);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .use-case-card i {
+            font-size: 2.5rem;
+            color: var(--ubuntu-orange);
+            margin-bottom: 1rem;
+            background: rgba(233, 84, 32, 0.1);
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.2rem;
+        }
+
+        /* Tabla comparativa mejorada */
+        .comparison-table {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
+            border-radius: 15px;
+            border: 2px solid #ffd54f;
+            box-shadow: 0 8px 25px rgba(255, 213, 79, 0.15);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 1rem;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        thead {
+            background: linear-gradient(135deg, var(--primary-color), #2d3748);
+        }
+
+        th {
+            padding: 1.2rem;
+            text-align: left;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th:last-child {
+            border-right: none;
+        }
+
+        tbody tr {
+            transition: var(--transition);
+        }
+
+        tbody tr:hover {
+            background-color: rgba(52, 152, 219, 0.1);
+            transform: scale(1.01);
+        }
+
+        td {
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid #e2e8f0;
+            background: white;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Command Cards mejorados */
+        .command-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-left: 6px solid var(--apache-red);
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .command-card::before {
+            content: "Terminal";
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: linear-gradient(135deg, var(--apache-red), #b91c1c);
+            color: white;
+            padding: 8px 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border-radius: 0 12px 0 12px;
+            letter-spacing: 1px;
+        }
+
+        .command {
+            font-family: 'Ubuntu Mono', 'Courier New', monospace;
+            background: #1a202c;
+            color: #50fa7b;
+            padding: 1.5rem;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-size: 1.1rem;
+            margin: 1rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+            border: 1px solid #2d3748;
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, var(--accent-color), #2980b9);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .copy-btn:hover {
+            background: linear-gradient(135deg, #2980b9, #1c6ea4);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+        }
+
+        /* Images Grid mejorado */
+        .images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 2.5rem 0;
+        }
+
+        .image-card {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .image-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+            transition: var(--transition);
+        }
+
+        .image-card:hover img {
+            transform: scale(1.1);
+        }
+
+        .image-card .caption {
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            transform: translateY(100%);
+            transition: var(--transition);
+        }
+
+        .image-card:hover .caption {
+            transform: translateY(0);
+        }
+
+        /* Footer mejorado */
+        footer {
+            background: linear-gradient(135deg, var(--dark-color) 0%, #1a202c 100%);
+            color: white;
+            text-align: center;
+            padding: 3.5rem 0;
+            margin-top: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        footer::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--ubuntu-orange), var(--apache-red), var(--accent-color));
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-content h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, #fff, #e2e8f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.8rem;
+            transition: var(--transition);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .social-links a:hover {
+            color: var(--ubuntu-orange);
+            transform: translateY(-5px) scale(1.1);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Animaciones adicionales */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            header h1 {
+                font-size: 2.5rem;
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .logo-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            
+            .section {
+                padding: 2rem;
+            }
+            
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .command {
+                font-size: 0.95rem;
+                padding: 1.2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 3rem 0 2rem;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .section h2 {
+                font-size: 1.8rem;
+            }
+            
+            .section h2 i {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+            
+            .stat-card h3 {
+                font-size: 2.2rem;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <h1>
+                <i class="fab fa-ubuntu floating"></i>
+                Proyecto Final - Servidor Apache en Ubuntu
+                <i class="fas fa-server floating"></i>
+            </h1>
+            <p class="subtitle">Configuración completa de un servidor web Apache en Ubuntu Server con todas sus ventajas y optimizaciones</p>
+            
+            <div class="logo-container">
+                <div class="logo">
+                    <i class="fab fa-ubuntu"></i>
+                    <span>Ubuntu 22.04 LTS</span>
+                </div>
+                <div class="logo">
+                    <i class="fas fa-server"></i>
+                    <span>Apache 2.4</span>
+                </div>
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Firewall UFW</span>
+                </div>
+                <div class="logo">
+                    <i class="fas fa-bolt"></i>
+                    <span>Alto Rendimiento</span>
+                </div>
+            </div>
         </div>
+    </header>
+
+    <main class="container">
+        <!-- Introducción -->
+        <section class="section">
+            <h2><i class="fas fa-info-circle"></i> Introducción al Proyecto</h2>
+            <p>Este proyecto demuestra la instalación y configuración completa de un servidor web Apache en Ubuntu Server. Apache es el servidor web más utilizado a nivel mundial, y combinado con Ubuntu Server, ofrece una solución robusta, segura y de alto rendimiento para hosting web. En esta guía aprenderás desde la instalación básica hasta la configuración avanzada de hosts virtuales y seguridad, comprendiendo por qué esta combinación es la elección preferida de millones de administradores de sistemas.</p>
+            
+            <div class="images-grid">
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1629654291660-3c98113a0438?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Servidor Ubuntu">
+                    <div class="caption">Servidor Ubuntu en Data Center</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1614064641938-3bbee52942c7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Apache Logo">
+                    <div class="caption">Servidor Web Apache</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Configuración Terminal">
+                    <div class="caption">Configuración desde Terminal</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Nueva Sección: ¿Por qué Apache en Ubuntu? -->
+        <section class="section">
+            <h2><i class="fas fa-question-circle"></i> ¿Por Qué Apache en Ubuntu?</h2>
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">✓</div>
+                    <h3>Ventajas de Apache</h3>
+                    <ul>
+                        <li><strong>Estabilidad probada:</strong> Más de 25 años en producción</li>
+                        <li><strong>Multiplataforma:</strong> Funciona en múltiples sistemas operativos</li>
+                        <li><strong>Módulos extensibles:</strong> Arquitectura modular flexible</li>
+                        <li><strong>Comunidad activa:</strong> Gran soporte y documentación</li>
+                        <li><strong>Seguridad robusta:</strong> Actualizaciones constantes de seguridad</li>
+                        <li><strong>.htaccess:</strong> Configuración por directorio sin reiniciar</li>
+                    </ul>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">✓</div>
+                    <h3>Ventajas de Ubuntu Server</h3>
+                    <ul>
+                        <li><strong>LTS (Long Term Support):</strong> 5 años de soporte garantizado</li>
+                        <li><strong>Gratuito y Open Source:</strong> Sin costos de licencia</li>
+                        <li><strong>Seguridad:</strong> Actualizaciones automáticas de seguridad</li>
+                        <li><strong>Comunidad enorme:</strong> Mayor base de usuarios y recursos</li>
+                        <li><strong>APT:</strong> Gestor de paquetes poderoso y fácil de usar</li>
+                        <li><strong>Cloud Ready:</strong> Optimizado para implementaciones cloud</li>
+                    </ul>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">✓</div>
+                    <h3>Ventajas de la Combinación</h3>
+                    <ul>
+                        <li><strong>Compatibilidad perfecta:</strong> Apache incluido en repositorios oficiales</li>
+                        <li><strong>Configuración sencilla:</strong> Estructura de archivos bien organizada</li>
+                        <li><strong>Alto rendimiento:</strong> Optimizado para hardware moderno</li>
+                        <li><strong>Fácil mantenimiento:</strong> Actualizaciones centralizadas</li>
+                        <li><strong>Escalabilidad:</strong> Ideal desde pequeños proyectos a grandes empresas</li>
+                        <li><strong>Ecosistema completo:</strong> Compatible con PHP, Python, Perl, MySQL, etc.</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="command-card">
+                <h4><i class="fas fa-chart-line"></i> Estadísticas Clave</h4>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>31.4%</h3>
+                        <p>Cuota de mercado web servers</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>25+ años</h3>
+                        <p>En desarrollo continuo</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>1000+</h3>
+                        <p>Módulos disponibles</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>47%</h3>
+                        <p>Servidores Linux usan Ubuntu</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="use-cases">
+                <h4><i class="fas fa-lightbulb"></i> Casos de Uso Ideales</h4>
+                <div class="use-cases-grid">
+                    <div class="use-case-card">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h5>E-commerce</h5>
+                        <p>Sitios con WordPress, Magento, PrestaShop</p>
+                    </div>
+                    <div class="use-case-card">
+                        <i class="fas fa-university"></i>
+                        <h5>Instituciones</h5>
+                        <p>Escuelas, universidades, gobierno</p>
+                    </div>
+                    <div class="use-case-card">
+                        <i class="fas fa-newspaper"></i>
+                        <h5>Medios Digitales</h5>
+                        <p>Periódicos, revistas, blogs</p>
+                    </div>
+                    <div class="use-case-card">
+                        <i class="fas fa-briefcase"></i>
+                        <h5>Corporaciones</h5>
+                        <p>Intranets, aplicaciones empresariales</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="comparison-table">
+                <h4><i class="fas fa-balance-scale"></i> Comparación con Alternativas</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Característica</th>
+                            <th>Apache</th>
+                            <th>Nginx</th>
+                            <th>LiteSpeed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Modelo de conexión</strong></td>
+                            <td>Proceso por conexión</td>
+                            <td>Event-driven</td>
+                            <td>Event-driven</td>
+                        </tr>
+                        <tr>
+                            <td><strong>.htaccess</strong></td>
+                            <td style="color: var(--success-color); font-weight: bold;">✓ Soportado</td>
+                            <td style="color: var(--apache-red);">✗ No nativo</td>
+                            <td style="color: var(--success-color);">✓ Soportado</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Facilidad configuración</strong></td>
+                            <td style="color: var(--success-color); font-weight: bold;">✓ Muy fácil</td>
+                            <td>Moderada</td>
+                            <td>Moderada</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Costo</strong></td>
+                            <td style="color: var(--success-color); font-weight: bold;">✓ Gratuito</td>
+                            <td style="color: var(--success-color);">✓ Gratuito</td>
+                            <td>Versión paga</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Compatibilidad</strong></td>
+                            <td style="color: var(--success-color); font-weight: bold;">✓ Excelente</td>
+                            <td style="color: var(--success-color);">✓ Buena</td>
+                            <td>Moderada</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Resto de las secciones existentes (Instalación, Firewall, etc.) -->
+        <!-- Las secciones restantes mantienen el mismo contenido pero con los nuevos estilos -->
         
-        <div class="step">
-            <div class="step-number">✓</div>
-            <h3>Ventajas de Ubuntu Server</h3>
-            <ul style="padding-left: 20px; margin-top: 10px;">
-                <li><strong>LTS (Long Term Support):</strong> 5 años de soporte garantizado</li>
-                <li><strong>Gratuito y Open Source:</strong> Sin costos de licencia</li>
-                <li><strong>Seguridad:</strong> Actualizaciones automáticas de seguridad</li>
-                <li><strong>Comunidad enorme:</strong> Mayor base de usuarios y recursos</li>
-                <li><strong>APT:</strong> Gestor de paquetes poderoso y fácil de usar</li>
-                <li><strong>Cloud Ready:</strong> Optimizado para implementaciones cloud</li>
-            </ul>
+        <section class="section">
+            <h2><i class="fas fa-download"></i> Instalación de Apache en Ubuntu</h2>
+            
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Actualizar Sistema</h3>
+                    <p>Primero actualiza la lista de paquetes y el sistema:</p>
+                    <div class="command">
+                        <code>sudo apt update && sudo apt upgrade -y</code>
+                        <button class="copy-btn" onclick="copyCode('update')">Copiar</button>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Instalar Apache</h3>
+                    <p>Instala el servidor web Apache2:</p>
+                    <div class="command">
+                        <code>sudo apt install apache2 -y</code>
+                        <button class="copy-btn" onclick="copyCode('install')">Copiar</button>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Verificar Instalación</h3>
+                    <p>Comprueba que Apache se instaló correctamente:</p>
+                    <div class="command">
+                        <code>sudo systemctl status apache2</code>
+                        <button class="copy-btn" onclick="copyCode('status')">Copiar</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="command-card">
+                <h4><i class="fas fa-terminal"></i> Comandos de Control del Servicio</h4>
+                <div class="command">
+                    <code>sudo systemctl start apache2</code>
+                    <button class="copy-btn" onclick="copyCode('start')">Copiar</button>
+                </div>
+                <div class="command">
+                    <code>sudo systemctl stop apache2</code>
+                    <button class="copy-btn" onclick="copyCode('stop')">Copiar</button>
+                </div>
+                <div class="command">
+                    <code>sudo systemctl restart apache2</code>
+                    <button class="copy-btn" onclick="copyCode('restart')">Copiar</button>
+                </div>
+                <div class="command">
+                    <code>sudo systemctl enable apache2</code>
+                    <button class="copy-btn" onclick="copyCode('enable')">Copiar</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Las demás secciones continuarían aquí -->
+        <!-- Secciones de Configuración Firewall, Estructura Directorios, etc. -->
+
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <h3>Proyecto Final - Sistemas Operativos</h3>
+            <p>Configuración de Servidor Apache en Ubuntu 22.04 LTS</p>
+            <p>© 2025 - Universidad Politecnica de Puebla</p>
+            <p>Desarrollado por Carlos Manuel Mendoza Bravo</p>
+            <p>Joseph Hernandez Sanchez</p>
+            <div class="social-links">
+                <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
+                <a href="#" title="Documentación"><i class="fas fa-book"></i></a>
+                <a href="#" title="Contacto"><i class="fas fa-envelope"></i></a>
+            </div>
         </div>
-        
-        <div class="step">
-            <div class="step-number">✓</div>
-            <h3>Ventajas de la Combinación</h3>
-            <ul style="padding-left: 20px; margin-top: 10px;">
-                <li><strong>Compatibilidad perfecta:</strong> Apache incluido en repositorios oficiales</li>
-                <li><strong>Configuración sencilla:</strong> Estructura de archivos bien organizada</li>
-                <li><strong>Alto rendimiento:</strong> Optimizado para hardware moderno</li>
-                <li><strong>Fácil mantenimiento:</strong> Actualizaciones centralizadas</li>
-                <li><strong>Escalabilidad:</strong> Ideal desde pequeños proyectos a grandes empresas</li>
-                <li><strong>Ecosistema completo:</strong> Compatible con PHP, Python, Perl, MySQL, etc.</li>
-            </ul>
-        </div>
-    </div>
-    
-    <div class="command-card" style="margin-top: 2rem;">
-        <h4><i class="fas fa-chart-line"></i> Estadísticas Clave</h4>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
-            <div style="text-align: center; padding: 1rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 8px;">
-                <h3 style="font-size: 2rem; margin: 0;">31.4%</h3>
-                <p>Cuota de mercado web servers</p>
-            </div>
-            <div style="text-align: center; padding: 1rem; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border-radius: 8px;">
-                <h3 style="font-size: 2rem; margin: 0;">25+ años</h3>
-                <p>En desarrollo continuo</p>
-            </div>
-            <div style="text-align: center; padding: 1rem; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border-radius: 8px;">
-                <h3 style="font-size: 2rem; margin: 0;">1000+</h3>
-                <p>Módulos disponibles</p>
-            </div>
-            <div style="text-align: center; padding: 1rem; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; border-radius: 8px;">
-                <h3 style="font-size: 2rem; margin: 0;">47%</h3>
-                <p>Servidores Linux usan Ubuntu</p>
-            </div>
-        </div>
-    </div>
-    
-    <div style="margin-top: 2rem; padding: 1.5rem; background: #f0f7ff; border-radius: 8px; border-left: 4px solid var(--accent-color);">
-        <h4><i class="fas fa-lightbulb"></i> Casos de Uso Ideales</h4>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 1rem;">
-            <div style="background: white; padding: 1rem; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <h5 style="color: var(--ubuntu-orange); margin-bottom: 0.5rem;"><i class="fas fa-shopping-cart"></i> E-commerce</h5>
-                <p>Sitios con WordPress, Magento, PrestaShop</p>
-            </div>
-            <div style="background: white; padding: 1rem; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <h5 style="color: var(--ubuntu-orange); margin-bottom: 0.5rem;"><i class="fas fa-university"></i> Instituciones</h5>
-                <p>Escuelas, universidades, gobierno</p>
-            </div>
-            <div style="background: white; padding: 1rem; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <h5 style="color: var(--ubuntu-orange); margin-bottom: 0.5rem;"><i class="fas fa-newspaper"></i> Medios Digitales</h5>
-                <p>Periódicos, revistas, blogs</p>
-            </div>
-            <div style="background: white; padding: 1rem; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <h5 style="color: var(--ubuntu-orange); margin-bottom: 0.5rem;"><i class="fas fa-briefcase"></i> Corporaciones</h5>
-                <p>Intranets, aplicaciones empresariales</p>
-            </div>
-        </div>
-    </div>
-    
-    <div style="margin-top: 2rem; padding: 1.5rem; background: #fff8e1; border-radius: 8px; border: 1px solid #ffd54f;">
-        <h4><i class="fas fa-balance-scale"></i> Comparación con Alternativas</h4>
-        <div style="overflow-x: auto; margin-top: 1rem;">
-            <table style="width: 100%; border-collapse: collapse;">
-                <thead>
-                    <tr style="background: var(--primary-color); color: white;">
-                        <th style="padding: 12px; text-align: left;">Característica</th>
-                        <th style="padding: 12px; text-align: left;">Apache</th>
-                        <th style="padding: 12px; text-align: left;">Nginx</th>
-                        <th style="padding: 12px; text-align: left;">LiteSpeed</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr style="border-bottom: 1px solid #eee;">
-                        <td style="padding: 12px; font-weight: bold;">Modelo de conexión</td>
-                        <td style="padding: 12px;">Proceso por conexión</td>
-                        <td style="padding: 12px;">Event-driven</td>
-                        <td style="padding: 12px;">Event-driven</td>
-                    </tr>
-                    <tr style="border-bottom: 1px solid #eee;">
-                        <td style="padding: 12px; font-weight: bold;">.htaccess</td>
-                        <td style="padding: 12px; color: var(--success-color);">✓ Soportado</td>
-                        <td style="padding: 12px; color: var(--apache-red);">✗ No nativo</td>
-                        <td style="padding: 12px; color: var(--success-color);">✓ Soportado</td>
-                    </tr>
-                    <tr style="border-bottom: 1px solid #eee;">
-                        <td style="padding: 12px; font-weight: bold;">Facilidad configuración</td>
-                        <td style="padding: 12px; color: var(--success-color);">✓ Muy fácil</td>
-                        <td style="padding: 12px;">Moderada</td>
-                        <td style="padding: 12px;">Moderada</td>
-                    </tr>
-                    <tr style="border-bottom: 1px solid #eee;">
-                        <td style="padding: 12px; font-weight: bold;">Costo</td>
-                        <td style="padding: 12px; color: var(--success-color);">✓ Gratuito</td>
-                        <td style="padding: 12px; color: var(--success-color);">✓ Gratuito</td>
-                        <td style="padding: 12px;">Versión paga</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 12px; font-weight: bold;">Compatibilidad</td>
-                        <td style="padding: 12px; color: var(--success-color);">✓ Excelente</td>
-                        <td style="padding: 12px; color: var(--success-color);">✓ Buena</td>
-                        <td style="padding: 12px;">Moderada</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</section>
+    </footer>
+
+    <script>
+        // Función para copiar comandos (mantener igual)
+        function copyCode(codeId) {
+            const commands = {
+                'update': 'sudo apt update && sudo apt upgrade -y',
+                'install': 'sudo apt install apache2 -y',
+                'status': 'sudo systemctl status apache2',
+                'start': 'sudo systemctl start apache2',
+                'stop': 'sudo systemctl stop apache2',
+                'restart': 'sudo systemctl restart apache2',
+                'enable': 'sudo systemctl enable apache2',
+                'ufw-enable': 'sudo ufw enable',
+                'ufw-allow': 'sudo ufw allow \'Apache Full\'',
+                'ufw-ssh': 'sudo ufw allow ssh',
+                'ufw-status': 'sudo ufw status verbose',
+                'mkdir': 'sudo mkdir -p /var/www/misitio',
+                'chown': 'sudo chown -R $USER:$USER /var/www/misitio',
+                'chmod': 'sudo chmod -R 755 /var/www/misitio',
+                'nano': 'sudo nano /etc/apache2/sites-available/misitio.conf',
+                'a2ensite': 'sudo a2ensite misitio.conf',
+                'a2dissite': 'sudo a2dissite 000-default.conf',
+                'reload': 'sudo systemctl reload apache2',
+                'create-html': 'nano /var/www/misitio/index.html',
+                'tail-access': 'sudo tail -f /var/log/apache2/access.log',
+                'tail-error': 'sudo tail -f /var/log/apache2/error.log',
+                'install-ab': 'sudo apt install apache2-utils -y',
+                'ab-test': 'ab -n 1000 -c 100 http://localhost/'
+            };
+
+            const command = commands[codeId];
+            if (command) {
+                navigator.clipboard.writeText(command).then(() => {
+                    const buttons = document.querySelectorAll('.copy-btn');
+                    buttons.forEach(btn => {
+                        if (btn.getAttribute('onclick') === `copyCode('${codeId}')`) {
+                            const originalText = btn.textContent;
+                            btn.textContent = "✓ Copiado";
+                            btn.style.background = "linear-gradient(135deg, var(--success-color), #229954)";
+                            
+                            setTimeout(() => {
+                                btn.textContent = originalText;
+                                btn.style.background = "";
+                            }, 2000);
+                        }
+                    });
+                });
+            }
+        }
+
+        // Animación mejorada para las secciones
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const stats = document.querySelectorAll('.stat-card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = 1;
+                        entry.target.style.transform = 'translateY(0)';
+                        
+                        // Animación especial para las tarjetas de estadísticas
+                        if (entry.target.classList.contains('stat-card')) {
+                            setTimeout(() => {
+                                entry.target.classList.add('animated');
+                            }, 100);
+                        }
+                    }
+                });
+            }, { 
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+            
+            sections.forEach(section => {
+                section.style.opacity = 0;
+                section.style.transform = 'translateY(30px)';
+                section.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                observer.observe(section);
+            });
+            
+            stats.forEach(stat => {
+                stat.style.opacity = 0;
+                stat.style.transform = 'scale(0.9)';
+                stat.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(stat);
+            });
+            
+            // Efecto de escritura para el título
+            const title = document.querySelector('header h1');
+            if (title) {
+                const text = title.textContent;
+                title.textContent = '';
+                let i = 0;
+                function typeWriter() {
+                    if (i < text.length) {
+                        title.textContent += text.charAt(i);
+                        i++;
+                        setTimeout(typeWriter, 50);
+                    }
+                }
+                setTimeout(typeWriter, 1000);
+            }
+        });
+    </script>
+</body>
+</html>
